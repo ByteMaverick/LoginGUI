@@ -148,7 +148,9 @@ public class App implements ActionListener {
         frame.add(panel);
         frame.setVisible(true);
     }
+    public static void main(String[]args){
 
+    }
 
 
 
