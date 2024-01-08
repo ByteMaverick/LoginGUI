@@ -3,6 +3,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.sql.*;
 
 public class GUILOGiN extends App implements ActionListener {
     private static JLabel label;
@@ -13,6 +14,10 @@ public class GUILOGiN extends App implements ActionListener {
     private static JLabel success;
 
     private  static JButton passwordreset;
+    // variables for JDBC
+    String url = "jdbc:mysql://localhost:3306/account_info";
+    String user_database = "root";
+    String password_database ="science237";
 
     public static void login(){
         JFrame frame = new JFrame();
@@ -73,18 +78,30 @@ public class GUILOGiN extends App implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String USER = "imohammed";
-        String PASSWORD = "IamIronMan";
         String user = userText.getText();
         String password = new String(passwordText.getPassword());
+        String sql = "select * from accountinfo where username = ?  and password =?";
+        try (
+                Connection connection = DriverManager.getConnection(url,user_database,password_database);
+                PreparedStatement preparedStatement = connection.prepareStatement(sql)
+                ){
+                preparedStatement.setString(1,user);
+                preparedStatement.setString(2,password);
+                try (ResultSet resultSet = preparedStatement.executeQuery()){
+                    if (resultSet.next()) {
+                        String login = "Logged in";
+                        success.setText(login);
+                    }
+                    else {
+                        String login = "Invalid login";
+                        success.setText(login);
+                    }
 
-        if (user.toLowerCase().equals(USER) && password.equals(PASSWORD)) {
-            String login = "Logged in";
-            success.setText(login);
-        } else {
-            String login = "Invalid login";
-            success.setText(login);
+                }
+        } catch (SQLException ex){
+            ex.printStackTrace();
         }
+
     }
     public static void main (String[]args){
         login();
