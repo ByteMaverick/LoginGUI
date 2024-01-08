@@ -7,7 +7,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 
-public class create_account implements ActionListener {
+public class create_account extends App implements ActionListener {
     private static JLabel label_title;
     private static JLabel label_username;
     private static JLabel label_subtitle;
@@ -18,43 +18,50 @@ public class create_account implements ActionListener {
     private static JLabel Question3;
     private static JTextField answer3;
     private static JButton button;
+    private static JTextField text_username;
+    private static JLabel label_password;
+    private static JPasswordField passwordField;
+    private static JLabel label_retype_password;
+    private static JPasswordField retype_passwordField;
+    private static JLabel security_questions;
 
     public static void account_creation() {
         JFrame frame = new JFrame();
         JPanel panel = new JPanel();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500, 600);  // Adjusted window size
+        frame.setSize(500, 600);
         frame.add(panel);
         panel.setLayout(null);
 
         label_title = new JLabel("Hi, Welcome!");
-        label_title.setBounds(150, 20, 200, 30);  // Adjusted bounds
+        label_title.setBounds(150, 20, 200, 30);
         panel.add(label_title);
 
         label_username = new JLabel("Username:");
         label_username.setBounds(10, 60, 80, 25);  // Adjusted bounds
         panel.add(label_username);
 
-        JTextField text_username = new JTextField();
+         text_username = new JTextField();
         text_username.setBounds(100, 60, 300, 25);  // Adjusted bounds
         panel.add(text_username);
 
-        JLabel label_password = new JLabel("Password:");
+         label_password = new JLabel("Password:");
         label_password.setBounds(10, 90, 80, 25);  // Adjusted bounds
         panel.add(label_password);
 
-        JPasswordField passwordField = new JPasswordField();
+         passwordField = new JPasswordField();
         passwordField.setBounds(100, 90, 300, 25);
         panel.add(passwordField);
 
-        JLabel label_retype_password = new JLabel("Retype Password:");
+         label_retype_password = new JLabel("Retype Password:");
+        label_retype_password.setBounds(10, 120, 120, 25);
         panel.add(label_retype_password);
 
-        JPasswordField retype_passwordField = new JPasswordField();
+         retype_passwordField = new JPasswordField(20);
         retype_passwordField.setBounds(130, 120, 270, 25);
         panel.add(retype_passwordField);
 
-        JLabel security_questions = new JLabel("If you forget your password,you can recover it by answering 3 questions ");
+         security_questions = new JLabel("If you forget your password,you can recover it by answering 3 questions ");
         security_questions.setBounds(10, 150, 480, 40);
         panel.add(security_questions);
 
@@ -100,11 +107,40 @@ public class create_account implements ActionListener {
         button.addActionListener(new create_account());
         panel.add(button);
 
+
+        success = new JLabel();
+        success.setBounds(150, 380, 300, 25);
+        panel.add(success);
+
         frame.setVisible(true);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        String sql1 = "insert into accountinfo values(?,?)";
+        String enter_username = text_username.getText();
+        String entered_password = passwordField.getText();
+        String entered_retyped_password = retype_passwordField.getText();
+        try{
+            Connection connection  = DriverManager.getConnection(url,user_database,password_database);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql1);
+            try {
+                preparedStatement.setString(1,enter_username);
+            }catch (Exception ex){
+                success.setText("Username already exist!");
+            }
+
+            if(entered_password.equals(entered_retyped_password)){
+                preparedStatement.setString(2,entered_password);
+            }
+            else{
+                success.setText("Passwords don't match!");
+            }
+
+
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
 
     }
 }

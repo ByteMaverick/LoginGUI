@@ -15,7 +15,7 @@ public class App implements ActionListener {
     private static JLabel Question1;
     private static JPasswordField answer1;
     private static JButton button;
-    private static JLabel success;
+    static JLabel success;
     private static JLabel Question2;
     private static JPasswordField answer2;
     private static  JLabel Question3;
