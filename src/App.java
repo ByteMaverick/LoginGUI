@@ -4,6 +4,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
 
 public class App implements ActionListener {
     private static JLabel label;
@@ -16,6 +21,10 @@ public class App implements ActionListener {
     private static  JLabel Question3;
     private static JPasswordField answer3;
     boolean if_correct_next = false;
+    // JDBC details
+    static String url = "jdbc:mysql://localhost:3306/account_info";
+    static String user_database = "root";
+    static String password_database ="science237";
 
     public static void passwordSet() {
 
@@ -118,14 +127,34 @@ public class App implements ActionListener {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String correctUsername = "imohammed";
                 String enteredName = username.getText();
-                if (enteredName.equalsIgnoreCase(correctUsername)) {
-                    passwordSet();
-                    frame.dispose();
-                } else {
-                    success.setText("Username doesn't exist");
+                String sql = "select username from accountinfo;";
+                ArrayList <String> usernamelist = new ArrayList<>();
+                try {
+                    Connection conection = DriverManager.getConnection(url,user_database,password_database);
+                    PreparedStatement preparedStatement = conection.prepareStatement(sql);
+                    ResultSet resultSet = preparedStatement.executeQuery();
+                    while(resultSet.next()){
+                        String usernames = resultSet.getString("username");
+                        usernamelist.add(usernames);
+
+                    }
+                    for( String element: usernamelist){
+                        if(enteredName.toLowerCase().equals(element)){
+                            passwordSet();
+                            frame.dispose();
+                        }
+                        else{
+                            success.setText("Invalid Username");
+                        }
+
+                    }
+
+
+                } catch (Exception ex){
+                    ex.printStackTrace();
                 }
+
             }
         });
 

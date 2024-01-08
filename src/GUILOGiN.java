@@ -14,10 +14,7 @@ public class GUILOGiN extends App implements ActionListener {
     private static JLabel success;
 
     private  static JButton passwordreset;
-    // variables for JDBC
-    String url = "jdbc:mysql://localhost:3306/account_info";
-    String user_database = "root";
-    String password_database ="science237";
+
 
     public static void login(){
         JFrame frame = new JFrame();
