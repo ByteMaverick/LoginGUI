@@ -6,6 +6,8 @@ import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
 
 public class create_account extends App implements ActionListener {
     private static JLabel label_title;
@@ -109,7 +111,7 @@ public class create_account extends App implements ActionListener {
 
 
         success = new JLabel();
-        success.setBounds(150, 380, 300, 25);
+        success.setBounds(150, 400, 300, 25);
         panel.add(success);
 
         frame.setVisible(true);
@@ -121,26 +123,65 @@ public class create_account extends App implements ActionListener {
         String enter_username = text_username.getText();
         String entered_password = passwordField.getText();
         String entered_retyped_password = retype_passwordField.getText();
+        ArrayList <String>  existing_usernames = new ArrayList<>();
+        ArrayList <String>  new_usernames = new ArrayList<>();
+
         try{
             Connection connection  = DriverManager.getConnection(url,user_database,password_database);
             PreparedStatement preparedStatement = connection.prepareStatement(sql1);
-            try {
-                preparedStatement.setString(1,enter_username);
-            }catch (Exception ex){
-                success.setText("Username already exist!");
-            }
+            ResultSet resultSet = preparedStatement.executeQuery("select username from accountinfo; ");
+            while(resultSet.next()){
+                String usernames = resultSet.getString("username");
+                existing_usernames.add(usernames);
 
-            if(entered_password.equals(entered_retyped_password)){
-                preparedStatement.setString(2,entered_password);
+            }
+            if(existing_usernames.contains(enter_username.toLowerCase())) {
+                success.setText("Username already exists!");
             }
             else{
-                success.setText("Passwords don't match!");
+                preparedStatement.setString(1,enter_username);
+
+                if(entered_password.equals(entered_retyped_password)){
+                    preparedStatement.setString(2,entered_password);
+                    int rowsAffected = preparedStatement.executeUpdate();
+
+                    if (rowsAffected > 0) {
+                        success.setText("Account created successfully!");
+                    } else {
+                        success.setText("Failed to create account.");
+                    }
+                } else {
+                    success.setText("Passwords don't match!");
+                }
+
+                }
+
+
+
+
+            if(existing_usernames.contains(enter_username.toLowerCase())){
+                success.setText("Account created successfully!");
             }
+            else{
+                success.setText("Failed to create account");
+            }
+
+
+
+
+
+
+            preparedStatement.executeUpdate();
+
+
+
+
 
 
         }catch (Exception ex){
             ex.printStackTrace();
         }
+
 
     }
 }

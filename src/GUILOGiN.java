@@ -14,6 +14,7 @@ public class GUILOGiN extends App implements ActionListener {
     private static JLabel success;
 
     private  static JButton passwordreset;
+    private static JButton button_account;
 
 
     public static void login(){
@@ -69,6 +70,18 @@ public class GUILOGiN extends App implements ActionListener {
             }
         });
         panel.add(passwordreset);
+        button_account = new JButton("Create Account");
+        button_account.setBounds(100, 130, 150, 25);
+        button_account.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                create_account.account_creation();
+                frame.dispose();
+            }
+        });
+
+        panel.add(button_account);
+
 
         frame.setVisible(true);
     }
