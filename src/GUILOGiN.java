@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -20,7 +21,10 @@ public class GUILOGiN extends App implements ActionListener {
     public static void login(){
         JFrame frame = new JFrame();
         JPanel panel = new JPanel();
+        panel.setBackground(Color.gray);
         frame.setSize(700, 600);
+        frame.setTitle("Login");
+
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(panel);
         panel.setLayout(null);

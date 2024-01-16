@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -30,6 +31,7 @@ public class create_account extends App implements ActionListener {
     public static void account_creation() {
         JFrame frame = new JFrame();
         JPanel panel = new JPanel();
+        panel.setBackground(Color.gray);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(500, 600);
         frame.add(panel);
@@ -123,6 +125,9 @@ public class create_account extends App implements ActionListener {
         String enter_username = text_username.getText();
         String entered_password = passwordField.getText();
         String entered_retyped_password = retype_passwordField.getText();
+        String  entered_answer1 = answer1.getText();
+        String entered_anwser2 = answer2.getText();
+        String entered_answer3 = answer3.getText();
         ArrayList <String>  existing_usernames = new ArrayList<>();
         ArrayList <String>  new_usernames = new ArrayList<>();
 
@@ -166,21 +171,25 @@ public class create_account extends App implements ActionListener {
                 success.setText("Failed to create account");
             }
 
-
-
-
-
-
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        String sql3 = "insert into security_question values(?,?,?,?)";
+        try{
+            Connection connection = DriverManager.getConnection(url,user_database,password_database);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql3);
+            preparedStatement.setString(1,enter_username);
+            preparedStatement.setString(2,entered_answer1);
+            preparedStatement.setString(3,entered_anwser2);
+            preparedStatement.setString(4,entered_answer3);
             preparedStatement.executeUpdate();
-
-
-
-
-
 
         }catch (Exception ex){
             ex.printStackTrace();
         }
+
+
+
 
 
     }

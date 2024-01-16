@@ -1,3 +1,5 @@
+import com.mysql.cj.util.StringInspector;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -32,6 +34,7 @@ public class App implements ActionListener {
         JFrame frame = new JFrame();
         JPanel panel = new JPanel(new FlowLayout());
         frame.setSize(300, 500);
+        panel.setBackground(Color.gray);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(panel);
 
@@ -93,27 +96,62 @@ public class App implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String city = "riyadh";
-        String answer1Text = answer1.getText();
-        String nickname = "addu";
-        String answer2Text = answer2.getText();
-        String birthyear ="2005";
-        String answer3Text = answer3.getText();
-        if(answer1Text.toLowerCase().equals(city) && answer2Text.toLowerCase().equals(nickname) && answer3Text.toLowerCase().equals(birthyear)){
-            if_correct_next = true;
-            success.setText(" USER NAME = imohammed \n PASSWORD = IamIronMan" );
+        String user = "imohammed";
+        String entered_answer1 = answer1.getText().toLowerCase();
+        String entered_answer2 = answer2.getText().toLowerCase();
+        String entered_answer3 = answer3.getText().toLowerCase();
+        ArrayList <String> entered_list = new ArrayList<>();
+        entered_list.add(entered_answer1);
+        entered_list.add(entered_answer2);
+        entered_list.add(entered_answer3);
+        ArrayList<String> retrived_list = new ArrayList<>();
+        String sql = "select question_1,question_2,question_3 from security_question where username = ?;";
+        try{
+            Connection connection  = DriverManager.getConnection(url,user_database,password_database);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1,user);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                retrived_list.add(resultSet.getString("question_1"));
+                retrived_list.add(resultSet.getString("question_2"));
+                retrived_list.add(resultSet.getString("question_3"));
+
+            }
+            if(retrived_list.equals(entered_list)){
+                String sql5 = "select  password from accountinfo where username = ?";
+                connection = DriverManager.getConnection(url, user_database, password_database);
+                preparedStatement = connection.prepareStatement(sql5);
+                preparedStatement.setString(1, user);
+                ResultSet password = preparedStatement.executeQuery();
+                if (password.next()) {
+
+                    String retrievedPassword = password.getString("password");
+                    success.setText("Password: " + retrievedPassword);
+                } else {
+                    success.setText("Password not found.");
+                }
+
+
+            }
+            else{
+                success.setText("Re-try!");
+            }
+
+
+           }catch (Exception ex ){
+            ex.printStackTrace();
         }
-        else{
-            success.setText("Wrong Answer" );
-        }
+
     }
     public static void user_name_check() {
         JFrame frame = new JFrame();
         frame.setSize(400, 200);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+
         JPanel panel = new JPanel();
         panel.setLayout(null);
+        panel.setBackground(Color.gray);
 
         JLabel label = new JLabel("Username:");
         label.setBounds(20, 20, 80, 25);
@@ -177,10 +215,7 @@ public class App implements ActionListener {
         frame.add(panel);
         frame.setVisible(true);
     }
-    public static void main(String[]args){
-        passwordSet();
 
-    }
 
 
 
